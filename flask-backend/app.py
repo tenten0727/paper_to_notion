@@ -35,8 +35,6 @@ def login(code):
     auth_resp = requests.post(base_url, headers=auth_headers, data=auth_data)
     auth_resp.json()
 
-    print("access_token: ",auth_resp.json()['access_token'])
-
     # You want to save resp.json()["workspace_id"] and resp.json()["access_token"] if you want to make requests later with this Notion account (otherwise they'll need to reauthenticate)
 
     # Use the access token we just got to search the user's workspace for databases

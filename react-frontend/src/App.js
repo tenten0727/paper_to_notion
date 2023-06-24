@@ -1,54 +1,50 @@
 import './App.css';
+import { LoginNotion } from './components/notion';
 import { useEffect, useState } from "react";
 
 // The OAuth client ID from the integration page!
-const oauth_client_id = "abc0a276-2e19-48a0-bd69-d84e6228b73d";
-
-const LoginNotion = ({dbs}) => {
-  return (
-    <div>
-      <a
-        style={{ display: "block" }}
-        href={`https://api.notion.com/v1/oauth/authorize?client_id=${oauth_client_id}&response_type=code&owner=user&redirect_uri=http%3A%2F%2Flocalhost%3A3000`}
-      >
-        Connect to Notion
-      </a>
-      {dbs.map((db) => (
-        <div
-          style={{
-            display: "inline-flex",
-            whiteSpace: "pre",
-            border: "1px solid black",
-            marginBottom: 10,
-          }}
-        >
-          {JSON.stringify(db, null, 2)}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function App() {
-  const [dbs, setdbs] = useState([]);
+    const [dbs, setdbs] = useState([]);
+    const [code, setcode] = useState("");
 
   // When you open the app, this doesn't do anything, but after you sign into Notion, you'll be redirected back with a code at which point we call our backend.
-  useEffect(() => {
-    const params = new URL(window.document.location).searchParams;
-    const code = params.get("code");
-    console.log(code);
-    if (!code) return;
-    fetch(`http://localhost:5000/login/${code}`).then(async (resp) => {
-      setdbs(await resp.json());
-    });
-  }, []);
+    useEffect(() => {
+        const params = new URL(window.document.location).searchParams;
+        const code = params.get("code");
+        if (!code) return;
+        setcode(code);
+    }, []);
 
-  return (
-    <div className="App">
-      <h1>Paper to Notion</h1>
-      <LoginNotion dbs={dbs}/>
-    </div>
-  );
+    // When the code changes, we call our backend to get the databases.
+    useEffect(() => {
+        if (!code) return;
+        fetch(`http://localhost:5000/login/${code}`).then(async (resp) => {
+        const data = await resp.json();
+        setdbs(data);
+
+        // Save the databases to local storage
+        localStorage.setItem("dbs", JSON.stringify(data));
+
+        // Clear the code query parameter from the URL
+        window.history.pushState({}, document.title, window.location.pathname);
+        });
+    }, [code]);
+
+    // When the component mounts, we check if there are databases saved in local storage
+    useEffect(() => {
+        const storedDbs = localStorage.getItem("dbs");
+        if (storedDbs) {
+        setdbs(JSON.parse(storedDbs));
+        }
+    }, []);
+
+    return (
+        <div className="App">
+        <h1>Paper to Notion</h1>
+        <LoginNotion dbs={dbs}/>
+        </div>
+    );
 }
 
 export default App;
