@@ -1,5 +1,5 @@
 import './App.css';
-import { LoginNotion } from './components/notion';
+import { LoginNotion, AddNotionPage } from './components/Notion';
 import { useEffect, useState } from "react";
 
 // The OAuth client ID from the integration page!
@@ -19,7 +19,7 @@ function App() {
     // When the code changes, we call our backend to get the databases.
     useEffect(() => {
         if (!code) return;
-        fetch(`http://localhost:5000/login/${code}`).then(async (resp) => {
+        fetch(`http://localhost:5000/login/${code}`, {credentials: 'include'}).then(async (resp) => {
         const data = await resp.json();
         setdbs(data);
 
@@ -43,6 +43,7 @@ function App() {
         <div className="App">
         <h1>Paper to Notion</h1>
         <LoginNotion dbs={dbs}/>
+        <AddNotionPage />
         </div>
     );
 }
