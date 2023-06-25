@@ -43,7 +43,7 @@ function App() {
         <div className="App">
         <h1>Paper to Notion</h1>
         <LoginNotion dbs={dbs}/>
-        <AddNotionPage />
+        <AddNotionPage dbs={dbs}/>
         </div>
     );
 }

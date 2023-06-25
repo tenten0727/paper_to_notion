@@ -45,11 +45,8 @@ def login(code):
 
     auth_resp = requests.post(base_url, headers=auth_headers, data=auth_data)
 
-    if 'access_token' not in session:
-        print('access_token not in session')
-        session['access_token'] = auth_resp.json()['access_token']
-        print(session.get('access_token'))
-    # You want to save resp.json()["workspace_id"] and resp.json()["access_token"] if you want to make requests later with this Notion account (otherwise they'll need to reauthenticate)
+    session['access_token'] = auth_resp.json()['access_token']
+    print(session.get('access_token'))
 
     # Use the access token we just got to search the user's workspace for databases
     data_resp = requests.post(
@@ -65,10 +62,44 @@ def login(code):
 
     return jsonify(data_resp.json()["results"])
 
-@app.route('/add-page')
+@app.route('/add-page', methods=['POST'])
 def add_page():
-    url = request.args.get('url')
-    return url
+    database_id = request.json.get('database_id')
+    url = request.json.get('url')
+    # title = request.json.get('title')
+    title = "Test"
+    headers = {
+        "Authorization": f"Bearer {session['access_token']}",
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-02-22"
+    }
+
+    create_page_url = "https://api.notion.com/v1/pages"
+
+    page_data = {
+        "parent": { "database_id": database_id },
+        "properties": {
+            "Title": {
+                "title": [
+                    {
+                        "text": {
+                            "content": title
+                        }
+                    }
+                ]
+            },
+            "URL": {
+                "url": url
+            }
+        }
+    }
+
+    response = requests.post(create_page_url, headers=headers, json=page_data)
+
+    if response.status_code == 200:
+        return jsonify(response.json()), 200
+    else:
+        return jsonify(response.json()), 400
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
