@@ -20,7 +20,7 @@ function App() {
     useEffect(() => {
         if (!code) return;
         fetch(`http://localhost:5000/login/${code}`, {credentials: 'include'}).then(async (resp) => {
-        const data = await resp.json();
+        const data = await resp.json().then(d => d.results);
         setdbs(data);
 
         // Save the databases to local storage
@@ -35,7 +35,7 @@ function App() {
     useEffect(() => {
         const storedDbs = localStorage.getItem("dbs");
         if (storedDbs) {
-        setdbs(JSON.parse(storedDbs));
+            setdbs(JSON.parse(storedDbs));
         }
     }, []);
 
