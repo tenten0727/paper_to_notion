@@ -5,13 +5,14 @@ import requests
 from datetime import timedelta
 import os
 
-from utils_notion import get_access_token, get_database_data, create_page
-from utils_paper import get_paper_info, download_paper_pdf, download_paper_image
+from utils.notion import get_access_token, get_database_data, create_page
+from utils.arxiv import get_paper_info, download_paper_pdf, download_paper_image
+from utils.chatgpt import get_summary
 
 app = Flask(__name__, static_folder='.images')
 CORS(app, supports_credentials=True)
-app.config["SESSION_PERMANENT"] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=5)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_USE_SIGNER"] = True
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SECRET_KEY"] = 'super secret key'
 app.config["SESSION_FILE_DIR"] = "./.flask_session/"
@@ -40,6 +41,7 @@ def add_page():
     data['url'] = request.json.get('url')
     pdf_path = download_paper_pdf(data['id'])
     img_path = download_paper_image(pdf_path)
+    data['summary'] = get_summary(data)
 
     response = create_page(session['access_token'], request.json.get('database_id'), data)
 

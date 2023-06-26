@@ -18,22 +18,22 @@ export const LoginNotion = ({dbs}) => {
     };
     return (
         <div>
-        <a
-            style={{ display: "block" }}
-            href={`https://api.notion.com/v1/oauth/authorize?client_id=${oauth_client_id}&response_type=code&owner=user&redirect_uri=http%3A%2F%2Flocalhost%3A3000`}
-        >
-            Connect to Notion
-        </a>
-        <div>
-            <h3>データベース：
-                <a
+            <a
                 style={{ display: "block" }}
-                href={dbs[0].url}
-                >
-                {dbs[0].title.map(part => part.plain_text).join('')}
-                </a>
-            </h3>
-        </div>
+                href={`https://api.notion.com/v1/oauth/authorize?client_id=${oauth_client_id}&response_type=code&owner=user&redirect_uri=http%3A%2F%2Flocalhost%3A3000`}
+            >
+                Connect to Notion
+            </a>
+            <div>
+                <h3>データベース：
+                    <a
+                    style={{ display: "block" }}
+                    href={dbs[0].url}
+                    >
+                    {dbs[0].title.map(part => part.plain_text).join('')}
+                    </a>
+                </h3>
+            </div>
         </div>
     );
 }
@@ -74,11 +74,25 @@ export const AddNotionPage = ({dbs}) => {
         <div>
             <InputText handleSubmit={handleSubmit} button_name={"Add page"}/>
             <p>{message}</p>
-            <div>
-                {pageData && <h3>{pageData.properties.Title.title[0].plain_text}</h3>}
-                {pageData && <img src={pageData.img_path} alt="Paper"/>}
+            <div className="flex flex-col my-20">
+                {pageData && <div className="text-xl font-bold my-4">{pageData.properties.Title.title[0].plain_text}</div>}
+                {pageData && (
+                <div>
+                    <img className="w-1/2 m-2" src={pageData.img_path} alt="Paper"/>
+                </div>
+                )}
+                {pageData && (
+                    <div>
+                        {pageData.properties["AI summary"].rich_text[0].plain_text.split("\n").map((text, index) => (
+                        <div>
+                            {text}
+                            <br />
+                        </div>
+                        ))}
+                    </div>
+                )}
             </div>
-            
+        
         </div>
     );
 }

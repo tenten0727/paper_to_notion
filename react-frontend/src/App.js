@@ -1,4 +1,3 @@
-import './App.css';
 import { LoginNotion, AddNotionPage } from './components/Notion';
 import { useEffect, useState } from "react";
 
@@ -19,6 +18,7 @@ function App() {
     // When the code changes, we call our backend to get the databases.
     useEffect(() => {
         if (!code) return;
+        setdbs([]);
         fetch(`http://localhost:5000/login/${code}`, {credentials: 'include'}).then(async (resp) => {
         const data = await resp.json().then(d => d.results);
         setdbs(data);

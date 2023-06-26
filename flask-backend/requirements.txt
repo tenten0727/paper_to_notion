@@ -3,3 +3,4 @@ arxiv
 pymupdf
 tqdm
 pdfrw
+openai

@@ -7,6 +7,10 @@ from pdfrw.findobjs import trivial_xobjs, wrap_object, find_objects
 from pdfrw.objects import PdfDict, PdfArray, PdfName
 import fitz
 
+os.makedirs(f".pdf", exist_ok=True)
+os.makedirs(f".images", exist_ok=True)
+
+
 def get_paper_info(url):
     # Extract the ID from the URL
     id_pattern = r'(\d+\.\d+)'
@@ -31,7 +35,6 @@ def get_paper_info(url):
 def download_paper_pdf(arxiv_id):
     paper = next(arxiv.Search(id_list=[arxiv_id]).results())
 
-    os.makedirs(f".pdf", exist_ok=True)
     if os.path.exists(f".pdf/{arxiv_id}.pdf"):
         return f".pdf/{arxiv_id}.pdf"
 

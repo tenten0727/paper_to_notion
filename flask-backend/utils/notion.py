@@ -76,6 +76,15 @@ def create_page(access_token, database_id, data):
                     "start": data['published'].strftime("%Y-%m-%d")
                 }
             },
+            "AI summary": {
+                "rich_text": [
+                    {
+                        "text": {
+                            "content": data['summary'],
+                        },
+                    }
+                ],
+            },
         }
     }
 
