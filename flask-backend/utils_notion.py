@@ -44,6 +44,7 @@ def get_database_data(access_token):
 
     return response
 
+# 参考：https://shiba6v.hatenablog.com/entry/extract_image_from_pdf
 def create_page(access_token, database_id, data):
     headers = {
         "Authorization": f"Bearer {access_token}",

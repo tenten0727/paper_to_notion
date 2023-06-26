@@ -40,6 +40,7 @@ export const LoginNotion = ({dbs}) => {
 
 export const AddNotionPage = ({dbs}) => {
     const [message, setMessage] = useState("");
+    const [pageData, setPageData] = useState(null);
 
     const handleSubmit = (e) => {
         setMessage("Adding page...");
@@ -63,12 +64,21 @@ export const AddNotionPage = ({dbs}) => {
             }
             return response.json();
         })
-        .then(data => console.log(data));
+        .then(data => {
+            console.log(data);
+            setPageData(data);
+        });
     };
+
     return (
         <div>
             <InputText handleSubmit={handleSubmit} button_name={"Add page"}/>
             <p>{message}</p>
+            <div>
+                {pageData && <h3>{pageData.properties.Title.title[0].plain_text}</h3>}
+                {pageData && <img src={pageData.img_path} alt="Paper"/>}
+            </div>
+            
         </div>
     );
 }
